@@ -1,4 +1,4 @@
-import { ADD_ITEM } from '../actions';
+import { ADD_ITEM, REMOVE_ITEM } from '../actions';
 
 const initialState = {
   additionalPrice: 0,
@@ -19,13 +19,27 @@ const initialState = {
 
 export const carStoreReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_ITEM: 
-      return {
+    case ADD_ITEM:
+      let contains = false;
+      state.car.features.forEach(feat => 
+        feat.id === action.payload.id ? contains = true : null
+      )
+      return contains ? state :
+      {
         ...state,
         additionalPrice: state.additionalPrice + action.payload.price,
         car: {
           ...state.car,
           features: [...state.car.features, action.payload]
+        }
+      }
+    case REMOVE_ITEM:
+      return {
+        ...state,
+        additionalPrice: state.additionalPrice - action.payload.price,
+        car: {
+          ...state.car,
+          features: state.car.features.filter(feat => feat.id !== action.payload.id)
         }
       }
     default:
